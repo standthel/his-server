@@ -10,6 +10,8 @@ class HisServerApplicationTests {
     @Test
     void contextLoads() {
     	int num=1;
+        String s="sdjfgj";
+
 
     }
 
