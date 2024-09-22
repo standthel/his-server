@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.his.user.mapper.UserMapper">
+	<!-- 登录返回user --> 
+	<select id="getUserBean" resultType="user">
+		select * from user where
+		userName=#{keywords} and password=#{keywords02}
+	</select>
+	<!-- 分页查询 -->
+	<select id="getUserList" resultType="user">
+				select u.*
+				from user u
+				where 1=1
+				<if test="keywords!= null and keywords!=''">
+						and DeptID=#{keywords}
+				</if>
+				<if test="keywords02!= null and keywords02!=''">
+						and RegistLeID=#{keywords02}
+				</if>
+				<if test="keywords03!= null and keywords03!=''">
+				<!-- 模糊查询的拼接过程 ： %值% -->
+						and UserName like concat('%',#{keywords03},'%')
+				</if>
+				order by u.id desc limit #{page},#{limit}
+		</select>
+	<select id="getUserCount" resultType="int">
+			select count(*) from his.user
+			<where>
+				<if test="keywords!= null and keywords!=''">
+						and DeptID=#{keywords}
+				</if>
+				<if test="keywords02!= null and keywords02!=''">
+						and RegistLeID=#{keywords02}
+				</if>
+				<if test="keywords03!= null and keywords03!=''">
+						and UserName like concat('%',#{keywords03},'%')
+				</if>
+			</where>
+	   </select>
+	<!-- 新增用户 
+	   insert into user(列名) values(值)
+	-->
+	<insert id="addUser">
+		insert into his.user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userName != null and userName != ''">
+				UserName,
+			</if>
+			<if test="password != null and password != ''">
+				Password,
+			</if>
+			<if test="realName != null and realName != ''">
+				RealName,
+			</if>
+			<if test="useType != null and useType != ''">
+				UseType,
+			</if>
+			<if test="docTitleID != null and docTitleID != ''">
+				DocTitleID,
+			</if>
+			<if test="isScheduling != null and isScheduling != ''">
+				IsScheduling,
+			</if>
+			<if test="deptID != null and deptID != ''">
+				DeptID,
+			</if>
+			<if test="registLeID != null and registLeID != ''">
+				RegistLeID,
+			</if>
+			DelMark,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userName != null and userName != ''">
+				#{userName},
+			</if>
+			<if test="password != null and password != ''">
+				#{password},
+			</if>
+			<if test="realName != null and realName != ''">
+				#{realName},
+			</if>
+			<if test="useType != null and useType != ''">
+				#{useType},
+			</if>
+			<if test="docTitleID != null and docTitleID != ''">
+				#{docTitleID},
+			</if>
+			<if test="isScheduling != null and isScheduling != ''">
+				#{isScheduling},
+			</if>
+			<if test="deptID != null and deptID != ''">
+				#{deptID},
+			</if>
+			<if test="registLeID != null and registLeID != ''">
+				#{registLeID},
+			</if>
+			1,
+		</trim>
+		<!-- 因为主键是自动增长的，所以通过虾米那的查询获取主键值 -->
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+	<!-- 删除用户 -->
+	<update id="deleteUserByIds"
+		parameterType="com.his.user.entity.User">
+		update his.user set DelMark=0 where id in
+		<!-- foreach用来迭代传过来的参数。 -->
+		<foreach collection="ids" item="id" index="index" open="("
+			close=")" separator=",">
+			#{id}
+		</foreach>
+
+	</update>
+	<!-- 修改用户 -->
+	<update id="updateUser"
+		parameterType="com.his.user.entity.User">
+		update his.user
+<set>
+				<if test="userName != null and userName != ''">
+			         UserName=#{userName},
+			   	</if>
+				<if test="password != null and password != ''">
+		        	Password= #{password},
+		       </if>
+		       <if test="realName != null and realName != ''">
+		         	RealName=#{realName},
+		       </if>	
+		       <if test="useType != null and useType != ''">
+		         	UseType=#{useType},
+		       </if>	
+		       <if test="docTitleID != null and docTitleID != ''">
+		        	DocTitleID= #{docTitleID},
+		       </if>	
+		       <if test="isScheduling != null and isScheduling != ''">
+		        	IsScheduling=#{isScheduling},
+		       </if>	
+		       <if test="deptID != null and deptID != ''">
+		       		DeptID=#{deptID},
+		      </if>  
+		      <if test="registLeID != null and registLeID != ''">
+		       		RegistLeID= #{registLeID},
+		      </if>  
+			</set>
+			where id=#{id}
+	</update>
+</mapper>

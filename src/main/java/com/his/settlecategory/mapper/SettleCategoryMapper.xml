@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+       
+<mapper namespace="com.his.settlecategory.mapper.SettleCategoryMapper">
+	<insert id="addSettleCategory">
+		insert into his.settlecategory(SettleCode,SettleName,SequenceNo,DelMark) 
+		value(#{settleCode},#{settleName},#{sequenceNo},1)
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+	<update id="deleteSettleCategory">
+		update his.settlecategory
+		set DelMark=0
+		where id=#{id}
+	</update>		
+	<update id="updateSettleCategory" parameterType="settleCategory">
+		update his.settlecategory 
+		<set>
+		<if test="settleCode!=null and settleCode!=''">
+			SettleCode=#{settleCode},
+		</if>
+		<if test="settleName!=null and settleName!=''">
+			SettleName=#{settleName},
+		</if>
+		<if test="sequenceNo!=null and sequenceNo!=''">
+			SequenceNo=#{sequenceNo}
+		</if>
+		</set>
+		where id=#{id}
+	</update>
+	<select id="pageSettleCategory" resultType="settleCategory">
+		SELECT *
+		from his.settlecategory 			
+		<where>
+			<if test="keyword!=null and keyword!=''">
+				SettleName like concat('%',#{keyword},'%')
+			</if>
+		</where>
+		order by SequenceNo desc limit #{page},#{limit}
+	</select>
+	<select id="pageSettleCategoryTotal" resultType="int">
+		select count(*) from his.settlecategory
+		<where>
+			<if test="keyword!=null and keyword!=''">
+				and SettleName like concat('%',#{keyword},'%')
+			</if>
+		</where>
+	</select>
+</mapper>

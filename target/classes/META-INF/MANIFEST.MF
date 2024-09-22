@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: his-server
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: Administrator
+Implementation-Vendor-Id: com.his
+Build-Jdk: 1.8.0_161
+Implementation-URL: https://spring.io/projects/spring-boot/his-server
+Created-By: Maven Integration for Eclipse
+

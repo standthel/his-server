@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+       
+<mapper namespace="com.his.registlevel.mapper.RegistLevelMapper">
+	<!--添加挂号级别-->
+    <insert id="addRegistLevel">
+        insert into RegistLevel (RegistCode,RegistName,SequenceNo,RegistFee,RegistQuota,DelMark)
+        value (#{registCode},#{registName},#{sequenceNo},#{registFee},#{registQuota},1)
+    </insert>
+    <!--删除挂号级别通过id-->
+    <update id="delRegistLevel">
+       update RegistLevel set DelMark=0 WHERE ID=#{ID}
+    </update>
+    <!--修改挂号级别-->
+    <update id="updateRegistLevel">
+        update RegistLevel set RegistCode=#{registCode},RegistName=#{registName},SequenceNo=#{sequenceNo},RegistFee=#{registFee},RegistQuota=#{registQuota},DelMark=#{delMark} where id=#{id}
+    </update>
+    <!--分页查询挂号级别-->
+    <select id="pageRegistLevel" resultType="registLevel">
+        select * from RegistLevel order by id desc limit #{page},#{limit}
+    </select>
+    <select id="pageRegistLevelTotal" resultType="int">
+		select count(*) from his.RegistLevel
+		<!-- 
+			<where>
+			<if test="keywords01!= null and keywords01!=''">
+				and DeptCode=#{keywords01}
+			</if>
+			<if test="keywords02!= null and keywords02!=''">
+				and DeptName=#{keywords02}
+			</if>
+		</where>
+		 -->
+	</select>
+</mapper>

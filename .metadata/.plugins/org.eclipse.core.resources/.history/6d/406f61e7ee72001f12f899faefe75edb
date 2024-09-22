@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.his.constantItem.mapper.DrugMapper">
+	
+	<!-- 分页查询 -->
+	<select id="getDrugList" resultType="com.his.constantItem.entity.Drug">
+				select * from drugs where 1=1
+				<if test="keywords!= null and keywords!=''">
+						and DrugsName like concat('%',#{keywords},'%')
+				</if>
+		</select>
+	<select id="getDrugCount" resultType="int">
+			select count(*) from his.drugs
+			<where>
+				<if test="keywords!= null and keywords!=''">
+					and DrugsName like concat('%',#{keywords},'%')
+				</if>
+				
+			</where>
+	   </select>
+	
+	<!-- 删除用户 -->
+	<update id="deleteDrugById"
+		parameterType="drug">
+		update his.drugs set DelMark=0 where id = #{id}
+	</update>
+	
+	<!-- 
+		新增用户 
+	   insert into  (列名) values(值) 
+	-->
+	
+	<insert id="addDrug">
+		insert into his.drugs
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="drugsCode != null and drugsCode != ''">
+				DrugsCode,
+			</if>
+			<if test="drugsName != null and drugsName != ''">
+				DrugsName,
+			</if>
+			<if test="drugsFormat != null and drugsFormat != ''">
+				DrugsFormat,
+			</if>
+			<if test="drugsUnit != null and drugsUnit != ''">
+				DrugsUnit,
+			</if>
+			<if test="manufacturer != null and manufacturer != ''">
+				Manufacturer,
+			</if>
+			<if test="drugsDosageID != null and drugsDosageID != ''">
+				DrugsDosageID,
+			</if>
+			<if test="drugsTypeID != null and drugsTypeID != ''">
+				DrugsTypeID,
+			</if>
+			<if test="drugsPrice != null and drugsPrice != ''">
+				DrugsPrice,
+			</if>
+			<if test="mnemonicCode != null and mnemonicCode != ''">
+				MnemonicCode,
+			</if>
+			<if test="creationDate != null and creationDate != ''">
+				CreationDate,
+			</if>
+			<if test="lastUpdateDate != null and lastUpdateDate != ''">
+				LastUpdateDate,
+			</if>
+			DelMark,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="drugsCode != ''">
+				#{drugsCode},
+			</if>
+			<if test="drugsName != null and drugsName != ''">
+				#{drugsName},
+			</if>
+			<if test="drugsFormat != null and drugsFormat != ''">
+				#{drugsFormat},
+			</if>
+			<if test="drugsUnit != null and drugsUnit != ''">
+				#{drugsUnit},
+			</if>
+			<if test="manufacturer != null and manufacturer != ''">
+				#{manufacturer},
+			</if>
+			<if test="drugsDosageID != null and drugsDosageID != ''">
+				#{drugsDosageID},
+			</if>
+			<if test="drugsTypeID != null and drugsTypeID != ''">
+				#{drugsTypeID},
+			</if>
+			<if test="drugsPrice != null and drugsPrice != ''">
+				#{drugsPrice},
+			</if>
+			<if test="mnemonicCode != null and mnemonicCode != ''">
+				#{mnemonicCode},
+			</if>
+			<if test="creationDate != null and creationDate != ''">
+				#{creationDate},
+			</if>
+			<if test="lastUpdateDate != null and lastUpdateDate != ''">
+				#{lastUpdateDate},
+			</if>
+			1,
+		</trim>
+		<!-- 因为主键是自动增长的，所以通过selectkey 的查询获取主键值 -->
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+</mapper>

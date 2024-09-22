@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+       
+<mapper namespace="com.his.scheduling.mapper.SchedulingMapper">
+	<select id="getDeptList" resultType="deptVo">
+		select ID,DeptName
+		from his.department 
+	</select>
+	<select id="getUserRole" parameterType="int" resultType="userRoleVo">
+		select u.RealName,r.Week,r.UserID,r.RuleName,r.DelMark,r.ID
+		from his.user u, his.rule r
+		where u.DeptID = r.DeptID  and u.id = r.UserID and r.DeptID = #{deptID}
+	</select>
+	<select id="getAllUserRole" resultType="userRoleVo">
+		select u.RealName,r.Week,r.UserID,r.RuleName,r.DelMark,r.ID
+		from user u,rule r
+		where u.DeptID = r.DeptID  and u.id = r.UserID
+	</select>
+	<update id="updateRole" parameterType="userRoleVo">
+		update his.rule 
+		<set>
+			<if test="week!=null and week!=''">
+				Week=#{week},
+			</if>
+			<if test="ruleName!=null and ruleName!=''">
+				RuleName=#{ruleName},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<select id="getUserByDeptID" parameterType="int" resultType="deptUser">
+		select u.RealName,u.ID userID,d.id deptID
+		from his.user u, his.department d
+		where u.DeptID = d.id  and d.DeptType=1
+		<if test="deptID!=null and deptID!='' and deptID!=0">
+			and u.DeptID = #{deptID}
+		</if>			
+	</select>
+	<insert id="addRule">
+		insert into his.rule 
+		values(null,#{ruleName},#{deptID},#{userID},#{week},1)
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+</mapper>

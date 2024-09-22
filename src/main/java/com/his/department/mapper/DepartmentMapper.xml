@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+       
+<mapper namespace="com.his.department.mapper.DepartmentMapper">
+	<!-- 分页查询 -->
+	<select id="getDepartmentList" resultType="department">
+	<!-- 
+		select c.id as constantItemid,d.*
+				from his.department d
+				left join his.constantItem c on d.DeptCategoryID=c.id
+				where 1=1
+	 -->
+				SELECT c.id AS constantItemid, d.*
+				FROM his.department d, his.constantItem c
+				WHERE d.DeptCategoryID = c.id and 1=1
+				<if test="keywords01!= null and keywords01!=''">
+						and DeptCode=#{keywords01}
+				</if>
+				<if test="keywords02!= null and keywords02!=''">
+						and DeptName=#{keywords02}
+				</if>
+				<if test="keywords03!= null and keywords03!=''">
+				<!-- 模糊查询的拼接过程 ： %值% -->
+						and DeptCategoryID=#{keywords03}
+				</if>
+				order by d.id desc limit #{page},#{limit}
+	</select>
+	<select id="getDepartmentCount" resultType="int">
+			select count(*) from his.department
+			<where>
+				<if test="keywords01!= null and keywords01!=''">
+						and DeptCode=#{keywords01}
+				</if>
+				<if test="keywords02!= null and keywords02!=''">
+						and DeptName=#{keywords02}
+				</if>
+			</where>
+	</select>
+	<!-- 删除单个用户 -->
+	<update id="deleteDepartment">
+   			update his.department
+   			set DelMark=0
+   			where id=#{id}
+  	</update>
+	<!-- 批量删除用户 -->
+	<update id="deleteDepartmentByIds"
+		parameterType="department">
+		update his.department set DelMark=0 where id in
+		<!-- foreach用来迭代传过来的参数。 -->
+		<foreach collection="ids" item="id" index="index" open="("
+			close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+	<!-- 新增 
+	   insert into department(列名) values(值)
+	-->
+	<insert id="addDepartment">
+		insert into his.department
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="deptCode != null and deptCode != ''">
+				DeptCode,
+			</if>
+			<if test="deptName != null and deptName != ''">
+				DeptName,
+			</if>
+			<if test="deptCategoryID != null and deptCategoryID != ''">
+				DeptCategoryID,
+			</if>
+			<if test="deptType != null and deptType != ''">
+				DeptType,
+			</if>
+			DelMark,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="deptCode != null and deptCode != ''">
+				#{deptCode},
+			</if>
+			<if test="deptName != null and deptName != ''">
+				#{deptName},
+			</if>
+			<if test="deptCategoryID != null and deptCategoryID != ''">
+				#{deptCategoryID},
+			</if>
+			<if test="deptType != null and deptType != ''">
+				#{deptType},
+			</if>
+			1,
+		</trim>
+		<!-- 因为主键是自动增长的，所以通过下面的查询获取主键值 -->
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+	
+	<!-- 登录返回user --> 
+	<select id="getUserBean" resultType="user">
+		select * from his.user where
+		userName=#{keywords01} and password=#{keywords02}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateDepartment"
+		parameterType="department">
+		update his.department
+		<set>
+			<if test="keywords01!=null and keywords01!=''">
+			    DeptCode=#{keywords01},
+			</if>
+			<if test="keywords02!=null and keywords02!=''">
+		        DeptName=#{keywords02},
+		    </if>
+		    <if test="keywords03!=null and keywords03!=''">
+		        DeptCategoryID=#{keywords03},
+		    </if>
+		</set>
+			where id=#{keywords04}
+	</update>
+	<!-- 导入 -->
+	<insert id="batchInsert" >
+    	INSERT INTO his.department
+    	VALUES
+    	<foreach item="item" index="index" collection="list" separator=",">
+      		(null,#{item.deptCode}, #{item.deptName},#{item.deptCategoryID},#{item.deptType},1)
+    	</foreach>
+  	</insert>
+  	<!-- 导出的查询 -->
+	<select id="selectDepartmentsByids" resultType="department">
+		select * from his.department where id in
+		<!-- foreach用来迭代传过来的参数。 -->
+		<foreach collection="ids" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+</mapper>

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+       
+<mapper namespace="com.his.fmeditem.mapper.FmeditemMapper">
+	<insert id="addFmeditem">
+		insert into fmeditem(itemCode,itemName,format,price,expClassID,deptID,mnemonicCode,creationDate,recordType)
+		<if test="itemCode!=null and itemCode !='' and itemName!=null and itemName !='' and price!='' and price !=''">
+ 			values(#{itemCode},#{itemName},#{format},#{price},#{expClassID},#{deptID},#{mnemonicCode},#{creationDate},#{recordType})
+		</if> 
+	</insert>			
+	<update id="deleteFmeditem">
+		update fmeditem set DelMark=0 where id=#{id}
+	</update>
+	<update id="delFmeditemByIds">
+		update fmeditem set DelMark=0 where id in
+		<foreach collection="ids" separator="," open="(" close=")" item="id">
+			#{id}
+		</foreach>
+	</update>
+	<update id="updateFmeditem">
+		update fmeditem 
+		<if test="id!=null and id!='' and itemCode!=null and itemCode !='' and itemName!=null and itemName !='' and price!=null and price != '' ">
+			set itemCode=#{itemCode},itemName=#{itemName},format=#{format},price=#{price},expClassID=#{expClassID},
+			deptID=#{deptID},mnemonicCode=#{mnemonicCode},recordType=#{recordType},lastUpdateDate=#{lastUpdateDate}
+		</if>
+		where id=#{id}
+	</update>
+	<select id="pageFmeditem" resultType="fmeditemVo">
+		select 
+			f.*,d.deptName,e.expName 
+		from 
+			fmeditem f,department d,expenseclass e 
+		where 
+			f.DeptID=d.id and f.ExpClassID=e.id
+		<if test="itemName!=null and itemName!=''">
+			and ItemName like concat('%',#{itemName},'%')
+		</if>
+		<if test="recordType!=null and recordType!=''">
+			and RecordType=#{recordType}
+		</if>
+			limit #{page},#{limit}
+		</select>
+	<select id="pageFmeditemTotal" resultType="int">
+		select count(*) from fmeditem 
+		<where>
+			<if test="itemName!=null and itemName!=''">
+				and ItemName like concat('%',#{itemName},'%')
+			</if>
+			<if test="recordType!=null and recordType!=''">
+				and RecordType=#{recordType}
+			</if>
+		</where>
+	</select>
+	<select id="findAll" resultType="fmeditem">
+		select * from fmeditem
+	</select>
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into fmeditem values
+		<foreach item="item" index="index" collection="list" separator=",">
+			(null,#{item.itemCode},#{item.itemName},#{item.format},#{item.price},#{item.expClassID},#{item.deptID},#{item.mnemonicCode},SYSDATE(),null,#{item.recordType},1)
+		</foreach>
+	</insert>
+</mapper>

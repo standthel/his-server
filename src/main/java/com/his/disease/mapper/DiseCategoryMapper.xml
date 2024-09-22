@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+       
+<mapper namespace="com.his.disease.mapper.DiseCategoryMapper">
+	<select id="getAllDiseCategory" resultType="disecategory">
+		select * from his.disecategory where 1=1
+		<if test="dicaName!=null and dicaName!=''">
+			and dicaName=#{dicaName}  
+		</if>
+		<if test="dicaType!=null and dicaType!=''">
+			and dicaType=#{dicaType}
+		</if>
+	</select>
+	<insert id="addDiseCategory" parameterType="disecategory">
+		insert into his.disecategory value(null,#{dicaCode},#{dicaName},#{sequenceNo},#{dicaType},1)
+	</insert>
+	<update id="updateDiseCategory" parameterType="disecategory">
+		update his.disecategory set DicaCode=#{dicaCode},DicaName=#{dicaName},SequenceNo=#{sequenceNo},DicaType=#{dicaType} where ID = #{id}
+	</update>
+	<select id="pageDiseCategoryQuery" resultType="disecategory">
+		select * from his.disecategory where 1=1
+		<if test="dicaName!=null and dicaName!=''">
+			and dicaName=#{dicaName}  
+		</if>
+		<if test="dicaType!=null and dicaType!=''">
+			and dicaType=#{dicaType}
+		</if>
+			order by ID limit #{page}, #{limit}
+	</select>
+	<select id="pageDiseCategoryTotal" resultType="int">
+		select count(*) from disecategory where 1=1
+		<if test="dicaName!=null and dicaName!=''">
+			and dicaName=#{dicaName}  
+		</if>
+		<if test="dicaType!=null and dicaType!=''">
+			and dicaType=#{dicaType}
+		</if>
+	</select>
+	<delete id="deleteDiseCategoryQuery">
+		update his.disecategory set DelMark=0 where ID=#{id}
+	</delete>
+</mapper>
